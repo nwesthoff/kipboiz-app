@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import { Grid } from "@material-ui/core";
 
-import fb, { fbMessage } from "/src/api/firebase";
+import fb from "/src/api/firebase";
 
 import ls from "local-storage";
 import { format } from "date-fns";
@@ -15,21 +15,34 @@ export default class App extends Component {
   constructor(props) {
     super(props);
 
+    this.getUserInfo = this.getUserInfo.bind(this);
+    this.getUID = this.getUID.bind(this);
+
     this.state = {
       currentDate: format(new Date(), "MM-DD-YYYY")
     };
   }
+
+  getUserInfo = () => {
+    return Object.keys(this.props.users).find(
+      key => this.props.users[key].name === ls("name")
+    );
+  };
+
+  getUID = () => {
+    return Object.keys(this.props.users).find(
+      key => this.props.users[key].name === ls("name")
+    );
+  };
 
   render() {
     return (
       <Grid container justify="center" alignItems="center" direction="column">
         <Grid item xs={12} style={{ maxWidth: "28rem", height: "auto" }}>
           <SendChicken
-            userName={ls("name")}
-            kipboiz={
-              this.props[this.state.currentDate]
-                ? this.props[this.state.currentDate].users
-                : []
+            userID={this.getUID()}
+            todayUsers={
+              this.props.dates ? this.props.dates[this.state.currentDate] : []
             }
           />
         </Grid>
@@ -42,11 +55,12 @@ export default class App extends Component {
             ) : null}
             <Grid item xs={12}>
               <CurrentKipBoiz
-                kipboiz={
-                  this.props[this.state.currentDate]
-                    ? this.props[this.state.currentDate].users
+                todayUsers={
+                  this.props.dates
+                    ? this.props.dates[this.state.currentDate]
                     : []
                 }
+                allKipboiz={this.props.users}
               />
             </Grid>
           </Grid>

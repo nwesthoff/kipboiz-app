@@ -11,46 +11,40 @@ export default class SendChicken extends Component {
   constructor(props) {
     super(props);
 
-    this.findUID = this.findUID.bind(this);
-
     this.state = {
       clicked: false
     };
   }
 
   componentDidMount() {
-    if (this.props.kipboiz && this.props.userName) {
-      if (Object.keys(this.props.kipboiz).includes(this.props.userName)) {
+    if (this.props.todayUsers && this.props.userName) {
+      if (Object.keys(this.props.todayUsers).includes(this.props.userName)) {
         this.setState({ clicked: true });
       }
     }
   }
 
-  findUID = () => {
-    return Object.keys(this.props.kipboiz).find(
-      key => this.props.kipboiz[key] === this.props.userName
-    );
-  };
-
   handleChickenClick = () => {
     const currentDate = format(new Date(), "MM-DD-YYYY");
 
-    if (this.props.userName && (this.props.userName !== undefined || "")) {
-      if (this.props.kipboiz && Object.keys(this.props.kipboiz)) {
-        if (Object.values(this.props.kipboiz).includes(this.props.userName)) {
+    if (this.props.userID && (this.props.userID !== undefined || "")) {
+      if (this.props.todayUsers && Object.keys(this.props.todayUsers)) {
+        if (Object.values(this.props.todayUsers).includes(this.props.userID)) {
           // Unclicked
-          fb.child(currentDate)
-            .child("users")
-            .child(this.findUID())
-            .remove();
+          fb.child("dates")
+            .child(currentDate)
+            .equalTo(this.props.userID)
+            .once("value", snapshot => {
+              snapshot.ref.remove();
+            });
           this.setState({ clicked: false });
           window.alert("Noooo why do you leave us??!!!");
         } else {
           // Clicked
           this.setState({ clicked: true });
-          fb.child(currentDate)
-            .child("users")
-            .push(this.props.userName, response => console.log(response));
+          fb.child("dates")
+            .child(currentDate)
+            .push(this.props.userID, response => console.log(response));
         }
       } else {
         window.alert("something went horribly wrong");

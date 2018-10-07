@@ -6,16 +6,20 @@ import {
   ListItemText,
   FormControl,
   TextField,
+  IconButton,
   Button,
   CardContent,
   Typography,
   ListItemIcon,
-  Divider
+  Divider,
+  ListItemSecondaryAction
 } from "@material-ui/core";
 
 import PersonIcon from "@material-ui/icons/Person";
+import EditIcon from "@material-ui/icons/Edit";
 
 import ls from "local-storage";
+import ChangeNicknameDialog from "./changenickname";
 
 export class EnterKipName extends Component {
   constructor(props) {
@@ -77,15 +81,38 @@ export class EnterKipName extends Component {
 }
 
 export class CurrentKipBoiz extends Component {
+  constructor(props) {
+    super(props);
+    this.changeNickname = this.changeNickname.bind(this);
+
+    this.state = {
+      showNicknameDialog: false,
+      selectedUser: {}
+    };
+  }
+
+  changeNickname = user => {
+    this.setState({
+      showNicknameDialog: true,
+      selectedUser: user
+    });
+  };
+
   render() {
-    let kipboiNames = [];
+    let kipboiInfo = [];
     let kipboiKeys = [];
     let kipboiArr = [];
-    if (this.props.kipboiz) {
-      kipboiNames = Object.values(this.props.kipboiz);
-      kipboiKeys = Object.keys(this.props.kipboiz);
-      kipboiArr = kipboiKeys.map((key, i) => {
-        return { key: key, name: kipboiNames[i] };
+
+    if (
+      this.props.todayUsers &&
+      Object.values(this.props.todayUsers).length > 0
+    ) {
+      kipboiInfo = this.props.allKipboiz;
+      kipboiKeys = Object.values(this.props.todayUsers);
+
+      kipboiArr = kipboiKeys.map(key => {
+        kipboiInfo[key].key = key;
+        return kipboiInfo[key];
       });
     } else {
       return (
@@ -112,30 +139,47 @@ export class CurrentKipBoiz extends Component {
     }
 
     return (
-      <Card>
-        <CardContent>
-          <Typography variant="headline" component="h2">
-            {kipboiArr.length} Kipboiz
-          </Typography>
-          <Typography component="p" variant="body1" gutterBottom>
-            Click the chicken to join the chickenfest!
-          </Typography>
-          <Divider />
-          <List>
-            {
-              //TO:DO count
-            }
-            {kipboiArr.map(item => (
-              <ListItem key={`item-${item.key}`}>
-                <ListItemIcon>
-                  <PersonIcon />
-                </ListItemIcon>
-                <ListItemText primary={`Kipboi ${item.name}`} />
-              </ListItem>
-            ))}
-          </List>
-        </CardContent>
-      </Card>
+      <div>
+        <Card>
+          <CardContent>
+            <Typography variant="headline" component="h2">
+              {kipboiArr.length} Kipboiz
+            </Typography>
+            <Typography component="p" variant="body1" gutterBottom>
+              Click the chicken to join the chickenfest!
+            </Typography>
+            <Divider />
+            <List>
+              {kipboiArr.map(item => (
+                <ListItem key={`item-${item.key}`}>
+                  <ListItemIcon>
+                    <PersonIcon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={`Kipboi ${item.name}`}
+                    secondary={item.nickname && item.nickname}
+                  />
+                  <ListItemSecondaryAction
+                    onClick={() => this.changeNickname(item)}
+                  >
+                    <IconButton>
+                      <EditIcon />
+                    </IconButton>
+                  </ListItemSecondaryAction>
+                </ListItem>
+              ))}
+            </List>
+          </CardContent>
+        </Card>
+        {this.state.showNicknameDialog && (
+          <ChangeNicknameDialog
+            user={this.state.selectedUser}
+            handleClose={() => {
+              this.setState({ showNicknameDialog: false });
+            }}
+          />
+        )}
+      </div>
     );
   }
 }
