@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 import chickenimage from "../assets/images/chicken.png";
 import fb from "../api/firebase";
+import { format } from "date-fns";
 
 const SendChickenStyled = styled.a``;
 
@@ -32,24 +33,27 @@ export default class SendChicken extends Component {
   };
 
   handleChickenClick = () => {
+    const currentDate = format(new Date(), "MM-DD-YYYY");
+
     if (this.props.userName && (this.props.userName !== undefined || "")) {
       if (this.props.kipboiz && Object.keys(this.props.kipboiz)) {
         if (Object.values(this.props.kipboiz).includes(this.props.userName)) {
           // Unclicked
-          fb.child("users")
+          fb.child(currentDate)
+            .child("users")
             .child(this.findUID())
             .remove();
           this.setState({ clicked: false });
           window.alert("Noooo why do you leave us??!!!");
         } else {
-          window.alert("something went horribly wrong");
+          // Clicked
+          this.setState({ clicked: true });
+          fb.child(currentDate)
+            .child("users")
+            .push(this.props.userName, response => console.log(response));
         }
       } else {
-        // Clicked
-        this.setState({ clicked: true });
-        fb.child("users").push(this.props.userName, response =>
-          console.log(response)
-        );
+        window.alert("something went horribly wrong");
       }
     } else {
       // Error

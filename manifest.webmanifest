@@ -1,0 +1,17 @@
+{
+  "short_name": "Kipboiz",
+  "name": "Kipboiz",
+  "icons": [
+    {
+      "src": "/src/assets/images/favicon.png",
+      "type": "image/png",
+      "sizes": "256x256"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#21a7e5",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#21a7e5",
+  "gcm_sender_id": "103953800507"
+}
