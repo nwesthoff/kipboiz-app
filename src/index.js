@@ -39,12 +39,14 @@ export default class App extends Component {
     return (
       <Grid container justify="center" alignItems="center" direction="column">
         <Grid item xs={12} style={{ maxWidth: "28rem", height: "auto" }}>
-          <SendChicken
-            userID={this.getUID()}
-            todayUsers={
-              this.props.dates ? this.props.dates[this.state.currentDate] : []
-            }
-          />
+          {this.props.users && (
+            <SendChicken
+              userID={this.getUID()}
+              todayUsers={
+                this.props.dates ? this.props.dates[this.state.currentDate] : []
+              }
+            />
+          )}
         </Grid>
         <Grid item style={{ minWidth: "24rem" }}>
           <Grid container direction="column" spacing={16}>

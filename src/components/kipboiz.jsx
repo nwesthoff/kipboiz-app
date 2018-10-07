@@ -19,6 +19,7 @@ import PersonIcon from "@material-ui/icons/Person";
 import EditIcon from "@material-ui/icons/Edit";
 
 import ls from "local-storage";
+import fb from "../api/firebase";
 import ChangeNicknameDialog from "./changenickname";
 
 export class EnterKipName extends Component {
@@ -33,7 +34,11 @@ export class EnterKipName extends Component {
   handleClick = e => {
     if (this.state.name && (this.state.name !== undefined || "")) {
       ls("name", this.state.name);
-      location.reload();
+      fb.child("users").push({
+        name: this.state.name,
+        nickname: ""
+      });
+      // location.reload();
     } else {
       window.alert("No valid kipboi name set!");
     }
@@ -54,26 +59,24 @@ export class EnterKipName extends Component {
             You only have to do this once. Probably.
           </Typography>
           <Divider />
-          <form>
-            <FormControl required fullWidth>
-              <TextField
-                label="What's your kipboi name?"
-                type="name"
-                margin="normal"
-                variant="outlined"
-                onChange={this.handleChange}
-              />
-            </FormControl>
-            <Button
-              type="submit"
-              fullWidth
-              variant="raised"
-              color="primary"
-              onClick={this.handleClick}
-            >
-              Save name
-            </Button>
-          </form>
+          <FormControl required fullWidth>
+            <TextField
+              label="What's your kipboi name?"
+              type="name"
+              margin="normal"
+              variant="outlined"
+              onChange={this.handleChange}
+            />
+          </FormControl>
+          <Button
+            type="submit"
+            fullWidth
+            variant="raised"
+            color="primary"
+            onClick={this.handleClick}
+          >
+            Save name
+          </Button>
         </CardContent>
       </Card>
     );
