@@ -12,14 +12,16 @@ import {
   Typography,
   ListItemIcon,
   Divider,
-  ListItemSecondaryAction
+  ListItemSecondaryAction,
+  CardHeader
 } from "@material-ui/core";
 
-import PersonIcon from "@material-ui/icons/Person";
 import EditIcon from "@material-ui/icons/Edit";
+import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 
 import ls from "local-storage";
 import fb from "../api/firebase";
+import { format } from "date-fns";
 import ChangeNicknameDialog from "./changenickname";
 
 export class EnterKipName extends Component {
@@ -34,11 +36,17 @@ export class EnterKipName extends Component {
   handleClick = e => {
     if (this.state.name && (this.state.name !== undefined || "")) {
       ls("name", this.state.name);
-      fb.child("users").push({
-        name: this.state.name,
-        nickname: ""
-      });
-      // location.reload();
+      console.log(this.props.users);
+      if (
+        !Object.values(this.props.users)
+          .map(user => user.name)
+          .includes(ls("name"))
+      ) {
+        fb.child("users").push({
+          name: this.state.name
+        });
+      }
+      location.reload();
     } else {
       window.alert("No valid kipboi name set!");
     }
@@ -90,7 +98,8 @@ export class CurrentKipBoiz extends Component {
 
     this.state = {
       showNicknameDialog: false,
-      selectedUser: {}
+      selectedUser: {},
+      currentDate: format(new Date(), "MM-DD-YYYY")
     };
   }
 
@@ -117,47 +126,29 @@ export class CurrentKipBoiz extends Component {
         kipboiInfo[key].key = key;
         return kipboiInfo[key];
       });
-    } else {
-      return (
-        <Card>
-          <CardContent>
-            <Typography
-              gutterBottom
-              variant="headline"
-              component="h2"
-              gutterBottom
-            >
-              You're alone :(
-            </Typography>
-            <Divider />
-            <Typography component="p">
-              There are no kipboiz yet, you can be the one that starts it.
-            </Typography>
-            <Typography component="p" variant="body1">
-              Click the Chicken!
-            </Typography>
-          </CardContent>
-        </Card>
-      );
     }
 
     return (
       <div>
         <Card>
+          <CardHeader
+            title={`${kipboiArr.length} Kipboiz`}
+            subheader={
+              this.state.currentDate !== format(new Date(), "MM-DD-YYYY")
+                ? "on " + this.state.currentDate
+                : null
+            }
+            action={
+              <IconButton>
+                <CalendarTodayIcon />
+              </IconButton>
+            }
+          />
+          <Divider />
           <CardContent>
-            <Typography variant="headline" component="h2">
-              {kipboiArr.length} Kipboiz
-            </Typography>
-            <Typography component="p" variant="body1" gutterBottom>
-              Click the chicken to join the chickenfest!
-            </Typography>
-            <Divider />
-            <List>
+            <List disablePadding>
               {kipboiArr.map(item => (
-                <ListItem key={`item-${item.key}`}>
-                  <ListItemIcon>
-                    <PersonIcon />
-                  </ListItemIcon>
+                <ListItem disableGutters key={`item-${item.key}`}>
                   <ListItemText
                     primary={`Kipboi ${item.name}`}
                     secondary={item.nickname && item.nickname}

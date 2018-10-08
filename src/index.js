@@ -15,9 +15,6 @@ export default class App extends Component {
   constructor(props) {
     super(props);
 
-    this.getUserInfo = this.getUserInfo.bind(this);
-    this.getUID = this.getUID.bind(this);
-
     this.state = {
       currentDate: format(new Date(), "MM-DD-YYYY")
     };
@@ -43,7 +40,9 @@ export default class App extends Component {
             <SendChicken
               userID={this.getUID()}
               todayUsers={
-                this.props.dates ? this.props.dates[this.state.currentDate] : []
+                this.props.dates[this.state.currentDate]
+                  ? this.props.dates[this.state.currentDate]
+                  : []
               }
             />
           )}
@@ -52,7 +51,7 @@ export default class App extends Component {
           <Grid container direction="column" spacing={16}>
             {!ls("name") || ls("name") === undefined ? (
               <Grid item xs={12}>
-                <EnterKipName />
+                <EnterKipName users={this.props.users} />
               </Grid>
             ) : null}
             <Grid item xs={12}>

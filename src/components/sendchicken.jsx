@@ -25,29 +25,32 @@ export default class SendChicken extends Component {
   }
 
   handleChickenClick = () => {
-    const currentDate = format(new Date(), "MM-DD-YYYY");
+    const today = format(new Date(), "MM-DD-YYYY");
 
     if (this.props.userID && (this.props.userID !== undefined || "")) {
       if (this.props.todayUsers && Object.keys(this.props.todayUsers)) {
         if (Object.values(this.props.todayUsers).includes(this.props.userID)) {
           // Unclicked
           fb.child("dates")
-            .child(currentDate)
+            .child(today)
+            .orderByValue()
             .equalTo(this.props.userID)
-            .once("value", snapshot => {
+            .once("child_added", snapshot => {
               snapshot.ref.remove();
             });
           this.setState({ clicked: false });
           window.alert("Noooo why do you leave us??!!!");
         } else {
           // Clicked
-          this.setState({ clicked: true });
           fb.child("dates")
-            .child(currentDate)
+            .child(today)
             .push(this.props.userID, response => console.log(response));
+          this.setState({ clicked: true });
         }
       } else {
-        window.alert("something went horribly wrong");
+        window.alert(
+          "something went horribly wrong and Nils is an idiot, send him an e-mail"
+        );
       }
     } else {
       // Error
