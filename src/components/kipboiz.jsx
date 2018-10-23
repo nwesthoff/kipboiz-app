@@ -10,7 +10,6 @@ import {
   Button,
   CardContent,
   Typography,
-  ListItemIcon,
   Divider,
   ListItemSecondaryAction,
   CardHeader
